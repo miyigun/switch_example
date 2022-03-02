@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Switch Örneği',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blueGrey,
@@ -45,8 +45,6 @@ class _MyHomePageState extends State<MyHomePage> {
         switchControl = true;
         isikDurumu = 'ON';
       });
-      print('ON');
-
     }
     else
     {
@@ -55,8 +53,6 @@ class _MyHomePageState extends State<MyHomePage> {
         switchControl = false;
         isikDurumu = 'OFF';
       });
-      print('OFF');
-
     }
   }
 
@@ -70,21 +66,17 @@ class _MyHomePageState extends State<MyHomePage> {
   getSwitchValues() async {
     switchControl = await getSwitchState();
     setState(() {});
-
   }
 
   Future<bool> saveSwitchState(bool value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool("switchState", value);
-    print('Switch Value saved $value');
     return prefs.setBool("switchState", value);
   }
 
   Future<bool> getSwitchState() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isSwitchedFT = prefs.getBool("switchState") ?? false;
-    print(isSwitchedFT);
-
     return isSwitchedFT;
   }
 
