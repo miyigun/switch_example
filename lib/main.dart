@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get/get.dart';
+import 'package:switch_example/controller/controller.dart';
+
+final GeneralController controller = Get.put(GeneralController());
 
 void main() {
   runApp(const MyApp());
@@ -10,7 +14,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Switch Örneği',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -32,28 +36,15 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  bool switchControl = false;
-
-  var isikDurumu = 'OFF';
-
   Future<void> toggleSwitch(bool value) async {
 
-    if(switchControl == false)
-    {
-      setState(() {
-        saveSwitchState(value);
-        switchControl = true;
-        isikDurumu = 'ON';
-      });
-    }
-    else
-    {
-      setState(() {
-        saveSwitchState(value);
-        switchControl = false;
-        isikDurumu = 'OFF';
-      });
-    }
+    saveSwitchState(value);
+
+    controller.switchControl.value == false ?  controller.isikDurumu.value='ON'
+                                            :  controller.isikDurumu.value='OFF';
+
+    controller.switchControl.value= !controller.switchControl.value;
+
   }
 
 
@@ -64,20 +55,23 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   getSwitchValues() async {
-    switchControl = await getSwitchState();
-    setState(() {});
+    controller.switchControl.value = await getSwitchState();
   }
 
   Future<bool> saveSwitchState(bool value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool("switchState", value);
-    return prefs.setBool("switchState", value);
+    prefs.setBool("isikDurumu", value);
+    return prefs.setBool("isikDurumu", value);
   }
 
   Future<bool> getSwitchState() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isSwitchedFT = prefs.getBool("switchState") ?? false;
-    return isSwitchedFT;
+    bool isikAcikMi = prefs.getBool("isikDurumu") ?? false;
+
+    isikAcikMi==true ? controller.isikDurumu.value="ON"
+                    : controller.isikDurumu.value="OFF";
+
+    return isikAcikMi;
   }
 
   @override
@@ -87,22 +81,23 @@ class _MyHomePageState extends State<MyHomePage> {
       home: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.cyan,
-          title: Text("Switch Uygulaması"),
+          title: const Text("Switch Uygulaması"),
         ),
 
-        body: Center(
+        body:
+        Obx(()=>Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
 
-                switchControl? Icon(Icons.lightbulb_outline, size: 100, color: Colors.yellow,)
-                              : Icon(Icons.lightbulb_outline, size: 100),
+                controller.switchControl.value ? const Icon(Icons.lightbulb_outline, size: 100, color: Colors.yellow,)
+                    : const Icon(Icons.lightbulb_outline, size: 100),
 
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Switch(
                     onChanged: toggleSwitch,
-                    value: switchControl,
+                    value:  controller.switchControl.value ,
                     activeColor: Colors.redAccent,
                     activeTrackColor: Colors.grey[400],
                     inactiveThumbColor: Colors.grey[200],
@@ -110,11 +105,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
 
-                Text("$isikDurumu"),
+                Text(controller.isikDurumu.value),
 
               ],
             )
-        ),
+        )),
       ),
     );
   }
