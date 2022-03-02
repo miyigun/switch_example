@@ -40,8 +40,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
     saveSwitchState(value);
 
-    controller.switchControl.value == false ?  controller.isikDurumu.value='ON'
-                                            :  controller.isikDurumu.value='OFF';
+    controller.switchControl.value  ?  controller.isikDurumu.value='OFF'
+                                    : controller.isikDurumu.value='ON';
 
     controller.switchControl.value= !controller.switchControl.value;
 
@@ -68,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isikAcikMi = prefs.getBool("isikDurumu") ?? false;
 
-    isikAcikMi==true ? controller.isikDurumu.value="ON"
+    isikAcikMi ? controller.isikDurumu.value="ON"
                     : controller.isikDurumu.value="OFF";
 
     return isikAcikMi;
